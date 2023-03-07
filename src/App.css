@@ -1,7 +1,13 @@
+.settingsAlert {
+  margin: 5%;
+}
+
 .seatCont {
   display: flex;
   flex-wrap: wrap;
+  margin-top: 80px;
 }
+
 .seat {
   flex: 28%;
   margin: 5px;
