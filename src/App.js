@@ -1,26 +1,25 @@
 import React, {useState, useReducer} from 'react'
 import './App.css'
+import Marquee from 'react-fast-marquee'
 import {SwapOutlined, DeleteOutlined, CheckCircleOutlined} from '@ant-design/icons'
 import {Col, Row, Input, InputNumber, Label, Button, Avatar, Alert, Switch, Typography, Image} from 'antd'
 const {TextArea} = Input
 const {Title} = Typography 
 
+
 const App = () => {
   const [newNames, updateNewNames] = useState("James\nHannah\nSteven\nMelvin\nJim\nLucy\nRoberta\nMike")
   const [nameArray, setArray] = useState(["James", "Hannah", "Steven", "Melvin", "Jim", "Lucy", "Roberta", "Mike", "Empty"])
   const [columns, setColumns] = useState(3)
+  const [message, setMessage] = useState(['Press "Clear" and enter names to get started!', 'info'])
   const [confirmed, confirm] = useState(false) // to trigger showing the rearrange seats button after confirming
   const [selectedSeat, selectSeat] = useState(-1)
   const [rows, setRows] = useState(3)
   const [notEnoughSeats, showNotEnoughSeats] = useState(false)
   const [noNamesAdded, showNoNames] = useState(false)
 
-// A message below the column and row boxes to say to enter names line-separated
 // Implement rearrange button functionality !!!
-// Add a message box below the buttons to explain when to use Confirm and Rearrange
 // Add an "Are You Sure?" popup after clear is pressed
-// When changing students, after you click the first name it can say "Changing ____ with..."
-// After, it can say "Changed _____ with _______"
 // Add background picture
 
 
@@ -36,12 +35,14 @@ const App = () => {
   }
 
   const clearAll = () => {
+    setMessage(['Enter names (line-separated) then press "Confirm"!', 'info'])
     updateNewNames("")
     showNotEnoughSeats(false)
     confirm(true)
     setArray([])
   }
 
+  // After pressing "Confirm"
   const makeArray = () => {
     showNotEnoughSeats(false)
     showNoNames(false)
@@ -62,6 +63,7 @@ const App = () => {
       }
     }
     confirm(false)
+    setMessage(['Press "Rearrange" to mix up the seating plan!', 'info'])
     setArray(newNameArray)
   }
 
@@ -72,9 +74,10 @@ const App = () => {
     func()
   } 
 
-  const handleSeat = (index) => {
+  const handleSeatChange = (index) => {
     if(selectedSeat < 0) {
       selectSeat(index)
+      setMessage([`Change ${nameArray[index]} with...?`, 'warning'])
     }
     else {
       let newNameArray = nameArray
@@ -83,13 +86,14 @@ const App = () => {
       newNameArray[selectedSeat] = tempValue 
       selectSeat(-1)
       setArray(newNameArray)
+      setMessage([`${nameArray[selectedSeat]} changed with ${nameArray[index]}`, 'success'])
     }
   }
 
   const mapNames = () => {
     return nameArray.map((student, index) => 
     <div style={{flex: (100 / columns) + "%", marginBottom: "10px"}}>
-      <a onClick={() => handleSeat(index)}>
+      <a onClick={() => handleSeatChange(index)}>
         <Avatar className='seatAvatar' size={50}
         style={{backgroundColor: selectedSeat === index ? "#1677ff" : "black"}}>{student}</Avatar>
       </a>
@@ -100,7 +104,7 @@ const App = () => {
   const mapSeats = () => {
     return nameArray.map((name, index) => 
     <>
-      <Button onClick={() => handleSeat(index)}>
+      <Button onClick={() => handleSeatChange(index)}>
         <Avatar>{name}</Avatar>
       </Button>
     </>
@@ -133,7 +137,7 @@ const App = () => {
           </Row>
           <Row justify="center">
             <Col span={18}>
-              <TextArea allowClear autoSize value={newNames} rows={"8"} style={{marginTop: "10px"}}
+              <TextArea autoSize value={newNames} rows={"8"} style={{marginTop: "10px"}}
               onChange={(e) => {
                 updateNewNames(e.target.value)
                 confirm(true)}}/>
@@ -153,12 +157,17 @@ const App = () => {
           </Row>
         </Col>
         <Col span={16}>
+          <Alert style={{width: "80%", margin: "auto", marginTop: "10px"}} 
+          type={message[1]} showIcon message={
+            <Marquee speed={50} pauseOnHover gradient={false}>
+              {message[0]}
+            </Marquee>} />
           {nameArray.length > 0 ?
             <div className='seatCont'>
             {mapNames()}
             </div>
             :
-            <Title style={{marginTop: "100px"}} keyboard type={"danger"} level={2}>No Names Added</Title>
+            <Title style={{marginTop: "70px"}} keyboard type={"danger"} level={2}>No Names Added</Title>
           }
         </Col>
       </Row>
