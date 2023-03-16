@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/seating-planner/static/css/main.27d97459.css",
+    "main.js": "/seating-planner/static/js/main.9eaed3bd.js",
+    "index.html": "/seating-planner/index.html",
+    "main.27d97459.css.map": "/seating-planner/static/css/main.27d97459.css.map",
+    "main.9eaed3bd.js.map": "/seating-planner/static/js/main.9eaed3bd.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.27d97459.css",
+    "static/js/main.9eaed3bd.js"
+  ]
+}
