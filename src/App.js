@@ -1,37 +1,33 @@
 import React, {useState, useReducer} from 'react'
 import './App.css'
 import Marquee from 'react-fast-marquee'
-import {SwapOutlined, DeleteOutlined, CheckCircleOutlined} from '@ant-design/icons'
-import {Col, Row, Input, InputNumber, Label, Button, Avatar, Alert, Switch, Typography, Image} from 'antd'
+import {SwapOutlined, DeleteOutlined, CheckCircleOutlined, UserOutlined, FrownOutlined} from '@ant-design/icons'
+import {Col, Row, Input, InputNumber, Button, Avatar, Alert, Switch, Typography, Image, Popconfirm} from 'antd'
 const {TextArea} = Input
 const {Title} = Typography 
 
 
 const App = () => {
-  const [newNames, updateNewNames] = useState("James\nHannah\nSteven\nMelvin\nJim\nLucy\nRoberta\nMike")
-  const [nameArray, setArray] = useState(["James", "Hannah", "Steven", "Melvin", "Jim", "Lucy", "Roberta", "Mike", "Empty"])
-  const [columns, setColumns] = useState(3)
+  const [newNames, updateNewNames] = useState("James\nHannah\nSteven\nMelvin\nJim\nLucy\nRoberta\nMike\nRoxanne\nHumphrey\nPavel\nGeorge")
+  const [nameArray, setArray] = useState(["James", "Hannah", "Steven", "Melvin", "Jim", "Lucy", "Roberta", "Mike", "Roxanne", "Humphrey", "Pavel", "George"])
+  const [columns, setColumns] = useState(4)
+  const [rows, setRows] = useState(3)
   const [message, setMessage] = useState(['Press "Clear" and enter names to get started!', 'info'])
   const [confirmed, confirm] = useState(false) // to trigger showing the rearrange seats button after confirming
   const [selectedSeat, selectSeat] = useState(-1)
-  const [rows, setRows] = useState(3)
   const [notEnoughSeats, showNotEnoughSeats] = useState(false)
   const [noNamesAdded, showNoNames] = useState(false)
-
-// Implement rearrange button functionality !!!
-// Add an "Are You Sure?" popup after clear is pressed
-// Add background picture
-
+  const [noDuplicates, showDuplicates] = useState(false)
 
   const rearrange = () => {
-    let newNameArray = nameArray
+    let newNameArray = [...nameArray]
     for (var i = newNameArray.length - 1; i > 0; i--) {
       var j = Math.floor(Math.random() * (i + 1));
       var temp = newNameArray[i];
       newNameArray[i] = newNameArray[j];
       newNameArray[j] = temp;
     }
-    setArray(newNameArray)
+    setArray(newNameArray) // does nothing
   }
 
   const clearAll = () => {
@@ -45,6 +41,7 @@ const App = () => {
   // After pressing "Confirm"
   const makeArray = () => {
     showNotEnoughSeats(false)
+    showDuplicates(false)
     showNoNames(false)
     if(newNames.length === 0) {
       showNoNames(true)
@@ -53,15 +50,24 @@ const App = () => {
     let removeEmptyLines = newNames.replace(/^(?=\n)$|^\s*|\s*$|\n\n+/gm,"")
     let newNameArray = removeEmptyLines.split(/\r?\n/)
     let totalSeats = columns * rows
-    if(newNameArray.length > totalSeats) {
+    if(newNameArray.length > totalSeats) { // check there are enough seats
       showNotEnoughSeats(true)
       return
     }
-    if(newNameArray.length < (totalSeats)) {
+    let nameSet = new Set(newNameArray)
+    console.log(nameSet)
+    console.log(newNameArray)
+    if(newNameArray.length !== new Set(newNameArray).size) { // Check for duplicates
+      console.log(newNameArray)
+      console.log(new Set(newNameArray))
+      showDuplicates(true)
+      return
+    }
+    if(newNameArray.length < (totalSeats)) { // Add "Empty" to fill unused seats
       while(newNameArray.length < (totalSeats)) {
         newNameArray.push("Empty")
       }
-    }
+    }  
     confirm(false)
     setMessage(['Press "Rearrange" to mix up the seating plan!', 'info'])
     setArray(newNameArray)
@@ -69,6 +75,7 @@ const App = () => {
 
   const handleChange = (func) => {
     showNotEnoughSeats(false)
+    showDuplicates(false)
     confirm(true)
     // if(func() === setRows()) {} // work around for weird bug
     func()
@@ -92,22 +99,12 @@ const App = () => {
 
   const mapNames = () => {
     return nameArray.map((student, index) => 
-    <div style={{flex: (100 / columns) + "%", marginBottom: "10px"}}>
+    <div style={{flex: (100 / columns) + "%", marginBottom: "10px", display: 'flex', flexDirection: 'column'}}>
       <a onClick={() => handleSeatChange(index)}>
-        <Avatar className='seatAvatar' size={50}
-        style={{backgroundColor: selectedSeat === index ? "#1677ff" : "black"}}>{student}</Avatar>
+        <Avatar icon={<UserOutlined />} className={selectedSeat === index ? 'selectedSeatAvatar' : 'seatAvatar'} size={50} />
       </a>
+      <label style={{margin: "auto", marginTop: "5px"}}>{student}</label>
     </div>
-    )
-  }
-
-  const mapSeats = () => {
-    return nameArray.map((name, index) => 
-    <>
-      <Button onClick={() => handleSeatChange(index)}>
-        <Avatar>{name}</Avatar>
-      </Button>
-    </>
     )
   }
 
@@ -116,7 +113,7 @@ const App = () => {
       {/* <a href="https://www.flaticon.com/free-icons/seat" title="seat icons">Seat icons created by Freepik - Flaticon</a> */}
         <Row justify="center" align="middle">
           <img height={40} src={require('./images/chair.png')} />
-          <Title level={2}>Seating Planner</Title>
+          <Title level={2}>Classroom Seating Planner</Title>
         </Row>
       <Row>
         <Col span={8}>
@@ -127,12 +124,15 @@ const App = () => {
           {noNamesAdded && (
             <Alert className='settingsAlert' type="error" showIcon message="Please add a name"/>
           )}
+          {noDuplicates && (
+            <Alert className='settingsAlert' type="error" showIcon message="No duplicates!"/>
+          )}
           <Row justify="space-around">
             <Col span={10}>
               <InputNumber min="1" addonBefore="Col: " value={columns} onChange={(value) => handleChange(setColumns(value))}/>
             </Col>
             <Col span={10}>
-              <InputNumber controls min="1" addonBefore="Row: " value={rows} onChange={(value) => handleChange(setRows(value))}/>
+              <InputNumber min="1" addonBefore="Row: " value={rows} onChange={(value) => handleChange(setRows(value))}/>
             </Col>
           </Row>
           <Row justify="center">
@@ -144,8 +144,10 @@ const App = () => {
             </Col>
           </Row>
           <Row justify={"center"} align="middle">
-            <Button onClick={() => clearAll()} style={{margin: "5px"}} danger type="primary">Clear
-            <DeleteOutlined /></Button>
+            <Popconfirm onConfirm={() => clearAll()} title="Are you sure want to delete everything?" okText="Yes" cancelText="No">
+              <Button style={{margin: "5px"}} danger type="primary">Clear
+              <DeleteOutlined /></Button>
+            </Popconfirm>
             {confirmed ? 
              <Button onClick={() => makeArray()} style={{margin: "5px"}} type="primary">Confirm
              <CheckCircleOutlined /></Button>
@@ -157,17 +159,19 @@ const App = () => {
           </Row>
         </Col>
         <Col span={16}>
-          <Alert style={{width: "80%", margin: "auto", marginTop: "10px"}} 
+          <Alert style={{width: "80%", margin: "auto", marginTop: "10px", fontSize: "larger"}} 
           type={message[1]} showIcon message={
             <Marquee speed={50} pauseOnHover gradient={false}>
               {message[0]}
             </Marquee>} />
-          {nameArray.length > 0 ?
+          {nameArray.length > 0 || newNames.length > 0 ?
             <div className='seatCont'>
             {mapNames()}
             </div>
             :
-            <Title style={{marginTop: "70px"}} keyboard type={"danger"} level={2}>No Names Added</Title>
+            <>
+              <FrownOutlined spin style={{marginTop: "70px", fontSize: "10rem"}}/>
+            </>
           }
         </Col>
       </Row>
