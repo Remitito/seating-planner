@@ -100,9 +100,9 @@ const App = () => {
   const mapNames = () => {
     return nameArray.map((student, index) => 
     <div style={{flex: (100 / columns) + "%", marginBottom: "10px", display: 'flex', flexDirection: 'column'}}>
-      <a onClick={() => handleSeatChange(index)}>
-        <Avatar icon={<UserOutlined />} className={selectedSeat === index ? 'selectedSeatAvatar' : 'seatAvatar'} size={50} />
-      </a>
+      <div>
+        <Avatar onClick={() => handleSeatChange(index)} icon={<UserOutlined />} className={selectedSeat === index ? 'selectedSeatAvatar' : 'seatAvatar'} size={50} />
+      </div>
       <label style={{margin: "auto", marginTop: "5px"}}>{student}</label>
     </div>
     )
