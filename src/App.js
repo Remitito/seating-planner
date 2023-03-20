@@ -2,10 +2,11 @@ import React, {useState, useReducer} from 'react'
 import './App.css'
 import Marquee from 'react-fast-marquee'
 import {SwapOutlined, DeleteOutlined, CheckCircleOutlined, UserOutlined, FrownOutlined} from '@ant-design/icons'
-import {Col, Row, Input, InputNumber, Button, Avatar, Alert, Switch, Typography, Image, Popconfirm} from 'antd'
+import {Col, Row, Input, InputNumber, Button, Avatar, Alert, Switch, Typography, Image, Popconfirm, Card} from 'antd'
 const {TextArea} = Input
 const {Title} = Typography 
 
+// Stop column part from automatically updating
 
 const App = () => {
   const [newNames, updateNewNames] = useState("James\nHannah\nSteven\nMelvin\nJim\nLucy\nRoberta\nMike\nRoxanne\nHumphrey\nPavel\nGeorge")
@@ -99,11 +100,12 @@ const App = () => {
 
   const mapNames = () => {
     return nameArray.map((student, index) => 
-    <div style={{flex: (100 / columns) + "%", marginBottom: "10px", display: 'flex', flexDirection: 'column'}}>
-      <div>
-        <Avatar onClick={() => handleSeatChange(index)} icon={<UserOutlined />} className={selectedSeat === index ? 'selectedSeatAvatar' : 'seatAvatar'} size={50} />
-      </div>
-      <label style={{margin: "auto", marginTop: "5px"}}>{student}</label>
+    <div style={{flex: (100 / columns) + "%", marginBottom: "10px", display: 'flex', 
+    flexDirection: 'column', marginBottom: "50px"}}>
+      <Card style={{width: "50%", margin: "auto", borderColor: "black"}} size='small' 
+      headStyle={{fontSize: "large", borderColor: "black"}} hoverable onClick={() => handleSeatChange(index)} title={student} >
+        <Avatar icon={<UserOutlined />} className={selectedSeat === index ? 'selectedSeatAvatar' : 'seatAvatar'} size={50} />
+      </Card>
     </div>
     )
   }
@@ -111,13 +113,13 @@ const App = () => {
   return (
     <div className="App">
       {/* <a href="https://www.flaticon.com/free-icons/seat" title="seat icons">Seat icons created by Freepik - Flaticon</a> */}
-        <Row justify="center" align="middle">
-          <img height={40} src={require('./images/chair.png')} />
-          <Title level={2}>Classroom Seating Planner</Title>
-        </Row>
+      <Row style={{marginTop: "30px"}} justify="center" align="middle">
+        <img height={40} src={require('./images/chair.png')} />
+        <Title style={{marginBottom: "30px", fontSize: "xx-large"}} level={2}>Classroom Seating Planner</Title>
+      </Row>
       <Row>
         <Col span={8}>
-          <h3>Settings</h3>
+          <h2>Settings</h2>
           {notEnoughSeats && (
             <Alert className='settingsAlert' type="error" showIcon message="Not enough seats! Add more columns or rows below"/>
           )}
@@ -145,21 +147,21 @@ const App = () => {
           </Row>
           <Row justify={"center"} align="middle">
             <Popconfirm onConfirm={() => clearAll()} title="Are you sure want to delete everything?" okText="Yes" cancelText="No">
-              <Button style={{margin: "5px"}} danger type="primary">Clear
+              <Button size="large"  style={{margin: "5px"}} danger type="primary">Clear
               <DeleteOutlined /></Button>
             </Popconfirm>
             {confirmed ? 
-             <Button onClick={() => makeArray()} style={{margin: "5px"}} type="primary">Confirm
+             <Button size="large" onClick={() => makeArray()} style={{margin: "5px"}} type="primary">Confirm
              <CheckCircleOutlined /></Button>
             :
-             <Button onClick={() => rearrange()} style={{margin: "5px"}} type="primary">Rearrange
+             <Button size="large" onClick={() => rearrange()} style={{margin: "5px"}} type="primary">Rearrange
              <SwapOutlined />
              </Button>
             }
           </Row>
         </Col>
         <Col span={16}>
-          <Alert style={{width: "80%", margin: "auto", marginTop: "10px", fontSize: "larger"}} 
+          <Alert style={{width: "80%", margin: "auto", marginTop: "10px", fontSize: "x-large"}} 
           type={message[1]} showIcon message={
             <Marquee speed={50} pauseOnHover gradient={false}>
               {message[0]}
@@ -170,7 +172,7 @@ const App = () => {
             </div>
             :
             <>
-              <FrownOutlined spin style={{marginTop: "70px", fontSize: "10rem"}}/>
+              <FrownOutlined style={{marginTop: "70px", fontSize: "10rem"}}/>
             </>
           }
         </Col>
