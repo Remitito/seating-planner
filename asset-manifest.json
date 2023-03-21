@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/seating-planner/static/css/main.27d97459.css",
-    "main.js": "/seating-planner/static/js/main.116f7fe6.js",
+    "main.js": "/seating-planner/static/js/main.4f591239.js",
     "index.html": "/seating-planner/index.html",
     "main.27d97459.css.map": "/seating-planner/static/css/main.27d97459.css.map",
-    "main.116f7fe6.js.map": "/seating-planner/static/js/main.116f7fe6.js.map"
+    "main.4f591239.js.map": "/seating-planner/static/js/main.4f591239.js.map"
   },
   "entrypoints": [
     "static/css/main.27d97459.css",
-    "static/js/main.116f7fe6.js"
+    "static/js/main.4f591239.js"
   ]
 }
