@@ -11,8 +11,11 @@ const {Title} = Typography
 const App = () => {
   const [newNames, updateNewNames] = useState("James\nHannah\nSteven\nMelvin\nJim\nLucy\nRoberta\nMike\nRoxanne\nHumphrey\nPavel\nGeorge")
   const [nameArray, setArray] = useState(["James", "Hannah", "Steven", "Melvin", "Jim", "Lucy", "Roberta", "Mike", "Roxanne", "Humphrey", "Pavel", "George"])
-  const [columns, setColumns] = useState(4)
+  const [columns, setColumns] = useState(4) // two variables for each to stop dynamic changes as this messes up formatting
+  const [tempColumns, setTempColumns] = useState(4)
   const [rows, setRows] = useState(3)
+  const [tempRows, setTempRows] = useState(3)
+  const [hoverName, setHoverName] = useState("")
   const [message, setMessage] = useState(['Press "Clear" and enter names to get started!', 'info'])
   const [confirmed, confirm] = useState(false) // to trigger showing the rearrange seats button after confirming
   const [selectedSeat, selectSeat] = useState(-1)
@@ -39,11 +42,15 @@ const App = () => {
     setArray([])
   }
 
+
+
   // After pressing "Confirm"
   const makeArray = () => {
     showNotEnoughSeats(false)
     showDuplicates(false)
     showNoNames(false)
+    setColumns(tempColumns)
+    setRows(tempRows)
     if(newNames.length === 0) {
       showNoNames(true)
       return
@@ -56,11 +63,7 @@ const App = () => {
       return
     }
     let nameSet = new Set(newNameArray)
-    console.log(nameSet)
-    console.log(newNameArray)
     if(newNameArray.length !== new Set(newNameArray).size) { // Check for duplicates
-      console.log(newNameArray)
-      console.log(new Set(newNameArray))
       showDuplicates(true)
       return
     }
@@ -74,11 +77,11 @@ const App = () => {
     setArray(newNameArray)
   }
 
-  const handleChange = (func) => {
+  const changeColRow = (func) => {
     showNotEnoughSeats(false)
     showDuplicates(false)
     confirm(true)
-    // if(func() === setRows()) {} // work around for weird bug
+    setMessage(['Press "Confirm" to update columns and rows', 'info'])
     func()
   } 
 
@@ -101,10 +104,11 @@ const App = () => {
   const mapNames = () => {
     return nameArray.map((student, index) => 
     <div style={{flex: (100 / columns) + "%", marginBottom: "10px", display: 'flex', 
-    flexDirection: 'column', marginBottom: "50px"}}>
-      <Card style={{width: "50%", margin: "auto", borderColor: "black"}} size='small' 
+    flexDirection: 'column', marginBottom: "25px"}}>
+      <Card onMouseOver={() => setHoverName(index)} onMouseOut={() => setHoverName("")}
+       style={{width: "50%", margin: "auto", borderColor: "black"}} size='small' 
       headStyle={{fontSize: "large", borderColor: "black"}} hoverable onClick={() => handleSeatChange(index)} title={student} >
-        <Avatar icon={<UserOutlined />} className={selectedSeat === index ? 'selectedSeatAvatar' : 'seatAvatar'} size={50} />
+        <Avatar icon={<UserOutlined />} className={hoverName === index ? 'selectedSeatAvatar' : 'seatAvatar'} size={50} />
       </Card>
     </div>
     )
@@ -131,10 +135,10 @@ const App = () => {
           )}
           <Row justify="space-around">
             <Col span={10}>
-              <InputNumber min="1" addonBefore="Col: " value={columns} onChange={(value) => handleChange(setColumns(value))}/>
+              <InputNumber min="1" addonBefore="Col: " value={tempColumns} onChange={(value) => changeColRow(setTempColumns(value))}/>
             </Col>
             <Col span={10}>
-              <InputNumber min="1" addonBefore="Row: " value={rows} onChange={(value) => handleChange(setRows(value))}/>
+              <InputNumber min="1" addonBefore="Row: " value={tempRows} onChange={(value) => changeColRow(setTempRows(value))}/>
             </Col>
           </Row>
           <Row justify="center">
