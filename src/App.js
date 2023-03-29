@@ -1,12 +1,12 @@
-import React, {useState, useReducer} from 'react'
+import React, {useState} from 'react'
 import './App.css'
 import Marquee from 'react-fast-marquee'
-import {SwapOutlined, DeleteOutlined, CheckCircleOutlined, UserOutlined, FrownOutlined} from '@ant-design/icons'
-import {Col, Row, Input, InputNumber, Button, Avatar, Alert, Switch, Typography, Image, Popconfirm, Card} from 'antd'
+import {SwapOutlined, DeleteOutlined, SmallDashOutlined, CheckCircleOutlined, UserOutlined, UserSwitchOutlined, FrownOutlined} from '@ant-design/icons'
+import {Col, Row, Input, InputNumber, Button, Avatar, Alert, Typography, Popconfirm, Card} from 'antd'
 const {TextArea} = Input
 const {Title} = Typography 
 
-// Stop column part from automatically updating
+// Change user icon to user switch after clicked and ensure color is changing properly
 
 const App = () => {
   const [newNames, updateNewNames] = useState("James\nHannah\nSteven\nMelvin\nJim\nLucy\nRoberta\nMike\nRoxanne\nHumphrey\nPavel\nGeorge")
@@ -57,12 +57,11 @@ const App = () => {
     }
     let removeEmptyLines = newNames.replace(/^(?=\n)$|^\s*|\s*$|\n\n+/gm,"")
     let newNameArray = removeEmptyLines.split(/\r?\n/)
-    let totalSeats = columns * rows
+    let totalSeats = tempColumns * tempRows
     if(newNameArray.length > totalSeats) { // check there are enough seats
       showNotEnoughSeats(true)
       return
     }
-    let nameSet = new Set(newNameArray)
     if(newNameArray.length !== new Set(newNameArray).size) { // Check for duplicates
       showDuplicates(true)
       return
@@ -103,12 +102,34 @@ const App = () => {
 
   const mapNames = () => {
     return nameArray.map((student, index) => 
-    <div style={{flex: (100 / columns) + "%", marginBottom: "10px", display: 'flex', 
+    <div style={{flex: (100 / columns) + "%", display: 'flex', 
     flexDirection: 'column', marginBottom: "25px"}}>
-      <Card onMouseOver={() => setHoverName(index)} onMouseOut={() => setHoverName("")}
+      <Card onMouseOver={() => setHoverName(index)} onMouseOut={() => setHoverName("")} 
        style={{width: "50%", margin: "auto", borderColor: "black"}} size='small' 
-      headStyle={{fontSize: "large", borderColor: "black"}} hoverable onClick={() => handleSeatChange(index)} title={student} >
-        <Avatar icon={<UserOutlined />} className={hoverName === index ? 'selectedSeatAvatar' : 'seatAvatar'} size={50} />
+      headStyle={{fontSize: "large", borderColor: "black"}} hoverable onClick={() => handleSeatChange(index)} title={student}>
+        {/* Empty seat icons */}
+        {student === "Empty" ? 
+        <> 
+          {hoverName === index || selectedSeat === index ?
+          <>
+            <Avatar icon={<SmallDashOutlined/>} className='selectedSeatAvatar' size={50}/>
+          </>  
+            :
+          <>
+            <Avatar icon={<SmallDashOutlined/>} className='seatAvatar' size={50}/>
+          </>
+          }
+        </>
+        :
+        // Filled seat icons
+        <>
+        {hoverName === index || selectedSeat === index ?
+          <Avatar icon={<UserSwitchOutlined/>} className='selectedSeatAvatar' size={50}/>
+          :
+          <Avatar icon={<UserOutlined/>} className='seatAvatar' size={50}/>
+        }
+        </>
+      }
       </Card>
     </div>
     )
