@@ -1,12 +1,12 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import './App.css'
 import Marquee from 'react-fast-marquee'
 import {SwapOutlined, DeleteOutlined, SmallDashOutlined, CheckCircleOutlined, UserOutlined, UserSwitchOutlined, FrownOutlined} from '@ant-design/icons'
 import {Col, Row, Input, InputNumber, Button, Avatar, Alert, Typography, Popconfirm, Card} from 'antd'
 const {TextArea} = Input
-const {Title} = Typography 
+const {Title} = Typography
 
-// Change user icon to user switch after clicked and ensure color is changing properly
+// Name length affects width on small screens so rows dont line up
 
 const App = () => {
   const [newNames, updateNewNames] = useState("James\nHannah\nSteven\nMelvin\nJim\nLucy\nRoberta\nMike\nRoxanne\nHumphrey\nPavel\nGeorge")
@@ -22,6 +22,7 @@ const App = () => {
   const [notEnoughSeats, showNotEnoughSeats] = useState(false)
   const [noNamesAdded, showNoNames] = useState(false)
   const [noDuplicates, showDuplicates] = useState(false)
+
 
   const rearrange = () => {
     let newNameArray = [...nameArray]
@@ -72,7 +73,7 @@ const App = () => {
       }
     }  
     confirm(false)
-    setMessage(['Press "Rearrange" to mix up the seating plan!', 'info'])
+    setMessage([' Press "Rearrange" to mix up the seating plan!', 'info'])
     setArray(newNameArray)
   }
 
@@ -101,12 +102,16 @@ const App = () => {
   }
 
   const mapNames = () => {
+    let fontSize = "medium"
+    if(window.innerWidth < 960) {
+      fontSize = "small"
+    }
     return nameArray.map((student, index) => 
     <div style={{flex: (100 / columns) + "%", display: 'flex', 
     flexDirection: 'column', marginBottom: "25px"}}>
       <Card onMouseOver={() => setHoverName(index)} onMouseOut={() => setHoverName("")} 
-       style={{width: "50%", margin: "auto", borderColor: "black"}} size='small' 
-      headStyle={{fontSize: "large", borderColor: "black"}} hoverable onClick={() => handleSeatChange(index)} title={student}>
+       style={{borderColor: "black"}} size='small' headStyle={{fontSize: fontSize, 
+      }} hoverable onClick={() => handleSeatChange(index)} title={student}>
         {/* Empty seat icons */}
         {student === "Empty" ? 
         <> 
@@ -137,7 +142,6 @@ const App = () => {
 
   return (
     <div className="App">
-      {/* <a href="https://www.flaticon.com/free-icons/seat" title="seat icons">Seat icons created by Freepik - Flaticon</a> */}
       <Row style={{marginTop: "30px"}} justify="center" align="middle">
         <img height={40} src={require('./images/chair.png')} />
         <Title style={{marginBottom: "30px", fontSize: "xx-large"}} level={2}>Classroom Seating Planner</Title>
@@ -188,7 +192,7 @@ const App = () => {
         <Col span={16}>
           <Alert style={{width: "80%", margin: "auto", marginTop: "10px", fontSize: "x-large"}} 
           type={message[1]} showIcon message={
-            <Marquee speed={50} pauseOnHover gradient={false}>
+            <Marquee speed={50} className={window.innerWidth < 960 ? "marqueeSmall" : "marqueeBig"} pauseOnHover gradient={false}>
               {message[0]}
             </Marquee>} />
           {nameArray.length > 0 || newNames.length > 0 ?

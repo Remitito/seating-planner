@@ -8,6 +8,10 @@
   margin-top: 50px;
 }
 
+.marqueeSmall {
+  font-size: 1rem;
+}
+
 .seat {
   flex: 28%;
   margin: 5px;
@@ -21,13 +25,11 @@
   background-color: black;
 }
 
-.seatAvatar:hover {
-  background-color: #1677ff;
-}
-
-
 .App {
   text-align: center;
+}
+
+body {
 }
 
 .App-logo {
